@@ -47,15 +47,21 @@
   color: #444;
 }
 
+.time {
+  font-size: 30rpx;
+  color: #444;
+}
+
+
 .todos .item.completed .name {
   text-decoration: line-through;
   color: #888;
 }
-/* 
+ 
 .todos .item .remove {
-  cursor: pointer;
+  margin-left: 20rpx;
 }
-*/
+
 .footer {
   display: flex;
   justify-content: space-between;

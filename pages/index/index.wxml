@@ -8,10 +8,10 @@
     <view class="todos">
       <!--列表展示所有任务 -->
       <view class="item{{ item.completed ? ' completed' : '' }}" wx:for="{{ todos }}" wx:key="{{ index }}" bindtap="toggleTodoHandle" data-index="{{ index }}">
-      <view><text class="time">123</text></view>
         <!-- 任务状态根据item项是否completed: success, todo: circle，根据状态定义icon type -->
         <icon class="checkbox" type="{{ item.completed ? 'success' : 'circle' }}"/>
         <text class="name">{{ item.name }}</text>
+        <view class="time">时间占用</view>
         <icon class="remove" type="clear" size="16" catchtap="removeTodoHandle" data-index="{{ index }}"/>
       </view>
     </view>
