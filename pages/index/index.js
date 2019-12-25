@@ -1,129 +1,121 @@
-//index.js
-//获取应用实例
-const app = getApp()
-
 Page({
-  // 数据 对应着 界面状态
+  //定义页面变量
   data: {
-    // 默认的status是1是全部
-    // setData改变 比如改成2 setData 2 已完成 3 未完成
-    status: 1,
-    lists: [],
-    curLists: [],
-    // 界面状态,全部被data接管起来
-    addShow: true,
-    lists: [{
-      title: '第一个任务',
-      time: '十分钟前',
-      status: '1'
-    },
-    {
-      title: '第二个任务',
-      time: '刚刚',
-      status: '0'
+    input: '',
+    todos: [],
+    leftCount: 0,
+    allCompleted: false,
+    logs: []
+  },
+  //保存方法，将todo-list和todo-logs保存在小程序本地，通过调用小程序开放api wx.setStorageSync（）
+  save: function () {
+    wx.setStorageSync('todo_list', this.data.todos)
+    wx.setStorageSync('todo_logs', this.data.logs)
+  },
+  //加载本地缓存中的todo-list
+  load: function () {
+    var todos = wx.getStorageSync('todo_list')
+    if (todos) {
+      var leftCount = todos.filter(function (item) {
+        return !item.completed
+      }).length
+      this.setData({ todos: todos, leftCount: leftCount })
     }
-
-    ],
-    addText: ''
-  },
-
-  showStatus: function (e) {
-    //  文字/?\
-
-    const status = e.currentTarget.dataset.status
-    if (this.data.status === status) return
-    if (status === '1') {
-      this.setData({
-        status: status,
-        curLists: this.data.lists
-      })
-      return
+    var logs = wx.getStorageSync('todo_logs')
+    if (logs) {
+      this.setData({ logs: logs })
     }
-    this.setData({
-      status: status,
-      curLists: this.data.lists.filter(item => +item.status === (status - 2))
-    })
-
   },
 
-  addTodoShow: function (e) {
-    this.setData({
-      addShow: false
-    })
-
+  onLoad: function () {
+    this.load()
   },
-  addTodo: function (e) {
-    //  ?
-    // 输入框的内容
-    if (!this.data.addText.trim()) {
-      return
+
+  inputChangeHandle: function (e) {
+    this.setData({ input: e.detail.value })
+  },
+  //增加任务
+  addTodoHandle: function (e) {
+    if (!this.data.input || !this.data.input.trim()) return
+    var todos = this.data.todos
+    //将任务数据push到map中
+    todos.push({ name: this.data.input, completed: false })
+    var logs = this.data.logs
+    logs.push({ timestamp: new Date(), action: 'Add', name: this.data.input })
+    this.setData({
+      input: '',
+      todos: todos,
+      leftCount: this.data.leftCount + 1,
+      logs: logs
+    })
+    this.save()
+  },
+  //完成任务
+  toggleTodoHandle: function (e) {
+    var index = e.currentTarget.dataset.index
+    var todos = this.data.todos
+    todos[index].completed = !todos[index].completed
+    var logs = this.data.logs
+    logs.push({
+      timestamp: new Date(),
+      action: todos[index].completed ? 'Finish' : 'Restart',
+      name: todos[index].name
+    })
+    this.setData({
+      todos: todos,
+      leftCount: this.data.leftCount + (todos[index].completed ? -1 : 1),
+      logs: logs
+    })
+    this.save()
+  },
+  //删除已完成任务
+  removeTodoHandle: function (e) {
+    var index = e.currentTarget.dataset.index
+    var todos = this.data.todos
+    var remove = todos.splice(index, 1)[0]
+    var logs = this.data.logs
+    logs.push({ timestamp: new Date(), action: 'Remove', name: remove.name })
+    this.setData({
+      todos: todos,
+      leftCount: this.data.leftCount - (remove.completed ? 0 : 1),
+      logs: logs
+    })
+    this.save()
+  },
+ //完成全部任务
+  toggleAllHandle: function (e) {
+    this.data.allCompleted = !this.data.allCompleted
+    var todos = this.data.todos
+    for (var i = todos.length - 1; i >= 0; i--) {
+      todos[i].completed = this.data.allCompleted
     }
-    const task = {
-      title: this.data.addText,
-      status: '0',
-      time: '刚刚'
+    var logs = this.data.logs
+    logs.push({
+      timestamp: new Date(),
+      action: this.data.allCompleted ? 'Finish' : 'Restart',
+      name: 'All todos'
+    })
+    this.setData({
+      todos: todos,
+      leftCount: this.data.allCompleted ? 0 : todos.length,
+      logs: logs
+    })
+    this.save()
+  },
+ //清除全部已完成
+  clearCompletedHandle: function (e) {
+    var todos = this.data.todos
+    var remains = []
+    for (var i = 0; i < todos.length; i++) {
+      todos[i].completed || remains.push(todos[i])
     }
-    const temp = [...this.data.lists,
-      task]
-    this.setData({
-      lists: temp,
-      addShow: true
+    var logs = this.data.logs
+    logs.push({
+      timestamp: new Date(),
+      action: 'Clear',
+      name: 'Completed todo'
     })
-    wx.showToast({
-      title: '添加成功!',
-      icon: 'success',
-      duration: 1000
-    });
-    // 看到界面 我们就知道要的数据了
-    // 看到交互,对数据操作
-    // ?如何添加新的Todo?
-    // 页面上多一条任务
-    // 显示多少条是由lists决定的
-    // lists push 
-    // 数据驱动界面 数据变 界面自动更新
-    // MVVM Model(数据模型data)View VM(视图模型层)
-  },
-  addTodoHide: function (e) {
-    this.setData({
-      addShow: true,
-      addText: '',
-      focuse: false
-    })
-  },
-  setInput: function (e) {
-    //  console.log(e,detail.value)
-    this.setData({
-      addText: e.detail.value
-    })
-  },
-  changeTodo: function (e) {
-    //  当前点击条目的status要变成 success 数据 lists 跟当前条目相关的数据
-    // 将status的值 更新为 1
-    const index = e.currentTarget.dataset.item;
-    const temp = this.data.lists;
-    temp.forEach((item, i) => {
-      // console.log(item, i);
-      if (i == index) {
-        if (item.status == '0') {
-          item.status = '1'
-          wx.showToast({
-            title: '已完成任务',
-            icon: 'success',
-            duration: 1000
-          })
-        } else {
-          item.status = '0'
-          wx.showToast({
-            title: '任务打回重做',
-            icon: 'circle',
-            duration: 1000
-          })
-        }
-      }
-      this.setData({
-        lists: temp,
-        // addShow:true
-      })
-    })
+    this.setData({ todos: remains, logs: logs })
+    this.save()
   }
 })
