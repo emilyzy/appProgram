@@ -1,3 +1,4 @@
+var util = require('../../utils/util.js');
 Page({
   //定义页面变量
   data: {
@@ -28,6 +29,12 @@ Page({
   },
 
   onLoad: function () {
+     // 调用函数时，传入 new Date（）函数，返回值是日期和时间
+    var time = util.formatTime(new Date());
+    // 再通过 setData 更改 Page（）里面的 data，动态更新页面的数据
+    this.setData({
+      time: time
+    });
     this.load()
   },
 
