@@ -1,6 +1,8 @@
 {
   "pages": [
-    "pages/index/index",
+    "pages/index/index", 
+    "pages/suctodos/suctodos",
+    "pages/notodos/notodos",
     "pages/logs/logs"
   ],
   "window": {
@@ -13,11 +15,11 @@
     "color": "#999",
     "selectedColor": "#222",
     "backgroundColor": "#f8f9fb",
-    "borderStyle": "white",
+    "borderStyle": "white", 
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "todos",
+        "text": "全部任务",
         "iconPath": "assets/todos.png",
         "selectedIconPath": "assets/todos-active.png"
       },

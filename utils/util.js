@@ -1,4 +1,5 @@
 // const formatTime = date => {
+//   var date = new Date()
 //   const year = date.getFullYear()
 //   const month = date.getMonth() + 1
 //   const day = date.getDate()
@@ -19,8 +20,9 @@
 // }
 
 
-
+//保留所需年月日
 const formatTime = date => {
+  var date = new Date()
   const year = date.getFullYear()
   const month = date.getMonth() + 1
   const day = date.getDate()

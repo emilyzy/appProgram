@@ -1,9 +1,5 @@
 <!--基于xml，wei xin markup language-->
 <view class="container">
-  <view class="header">
-    <image class="plus" src="/assets/plus.png" bindtap='addTodoHandle'/>
-    <input class="new-todo" value="{{ input }}" placeholder="添加任务" auto-focus bindinput="inputChangeHandle" bindconfirm="addTodoHandle"/>
-  </view>
   <!-- 根据任务数判断展示哪段代码块 -->
   <block wx:if="{{ todos.length }}">
     <view class="todos">
@@ -12,14 +8,9 @@
         <!-- 任务状态根据item项是否completed: success, todo: circle，根据状态定义icon type -->
         <icon class="checkbox" type="{{ item.completed ? 'success' : 'circle' }}"/>
         <text class="name">{{ item.name }}</text>
-        <view class="time">{{item.timestamp}}</view>
+        <view class="time">{{time}}</view>
         <icon class="remove" type="clear" size="16" catchtap="removeTodoHandle" data-index="{{ index }}"/>
       </view>
-    </view>
-    <view class="footer">
-      <text class="btn" bindtap="toggleAllHandle">完成全部</text>
-      <text wx:if="{{ leftCount }}"> {{ leftCount }} {{ leftCount === 0 ? 'item' : '条未完成' }} </text>
-      <text class="btn" wx:if="{{ todos.length > leftCount }}" bindtap="clearCompletedHandle">清除已完成</text>
     </view>
   </block>
   <block wx:else>
