@@ -1,4 +1,4 @@
-
+<!--基于xml，wei xin markup language-->
 <view class="container">
   <view class="header">
     <image class="plus" src="/assets/plus.png" bindtap='addTodoHandle'/>
